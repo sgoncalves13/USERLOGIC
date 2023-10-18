@@ -15,7 +15,7 @@ class HistoriaClinica(models.Model):
 
 
 class Adenda(models.Models):
-    autor = models.CharField(max_length=30)
+    autor = models.CharField(max_length=40)
     tipo = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=None)
     idhistoriaclinica = models.ForeignKey(HistoriaClinica, on_delete=models.CASCADE, related_name='adendas')
