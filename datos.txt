@@ -1,0 +1,13 @@
+Los usuarios en la base de datos
+
+Documento   Clave   Tipo
+
+1092524481  123     profesionalSalud
+0123456789  123     director
+1924203922  123     paciente
+4392923920  123     paciente
+2024203858  123     paciente
+8693938599  123     paciente
+5895863534  123     paciente
+1234235439  123     paciente
+2482366632  123     paciente
