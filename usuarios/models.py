@@ -7,7 +7,7 @@ class Usuario(models.Model):
    
 
 class HistoriaClinica(models.Model):
-    id = models.IntegerField()
+    id_hc = models.IntegerField(primary_key=True)
     diagnosticos =models.CharField(max_length=None)
     tratamientos = models.CharField(max_length=None)
     notas = models.CharField(max_length=None)
@@ -15,6 +15,7 @@ class HistoriaClinica(models.Model):
 
 
 class Adenda(models.Models):
+    id_adenda = models.IntegerField(primary_key=True)
     autor = models.CharField(max_length=40)
     tipo = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=None)
