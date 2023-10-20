@@ -13,6 +13,22 @@ def verificar_usuario(documento, clave):
         tipo = ""
 
     return respuesta, tipo
+
+def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo):
+    nuevo_usuario = Usuario(
+        documento=documento,
+        clave=clave,
+        tipo=tipo,
+        nombre=nombre,
+        edad=edad,
+        telefono=telefono,
+        sexo=sexo
+    )
+    nuevo_usuario.save()
+    print(f"> Usuario agregado con éxito: documento={documento}, clave={clave}, tipo={tipo}, nombre={nombre}, edad={edad}, telefono={telefono}, sexo={sexo}")
+
+
+
  # Asegúrate de importar el modelo de Usuario desde tu aplicación
 def obtener_usuario_por_documento(documento):
     try:
