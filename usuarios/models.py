@@ -8,13 +8,13 @@ class HistoriaClinica(models.Model):
 
 class Usuario(models.Model):
     documento = models.CharField(max_length=15, primary_key=True)
-    clave = models.CharField(max_length=30)
-    tipo = models.CharField(max_length=30)
-    nombre = models.CharField(max_length=30)
-    edad = models.CharField(max_length=30)
-    telefono = models.CharField(max_length=30)
-    sexo = models.CharField(max_length=30)
-    foto = models.CharField(max_length=255)
+    clave = models.CharField(max_length=30, default='a')
+    tipo = models.CharField(max_length=30, default='a')
+    nombre = models.CharField(max_length=30, default='a')
+    edad = models.CharField(max_length=30, default='a')
+    telefono = models.CharField(max_length=30, default='a')
+    sexo = models.CharField(max_length=30, default='a')
+    foto = models.CharField(max_length=255, default='a')
     historia_clinica = models.OneToOneField(HistoriaClinica, on_delete=models.CASCADE, related_name='usuario', null=True, blank=True)
     medico = models.ManyToManyField('self', blank=True, symmetrical=False, related_name='pacientes')
 
