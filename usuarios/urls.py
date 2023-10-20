@@ -1,8 +1,7 @@
 from django.urls import path
-from .views import AutenticacionAPI, UsuarioAPI
-
+from .views import agregarAdendaAPI, UsuarioAPI
 
 urlpatterns = [
-    path('autenticacion/', AutenticacionAPI.as_view()),
+    path('agregarAdenda/', agregarAdendaAPI.as_view()),
     path('usuario/', UsuarioAPI.as_view()),
 ]

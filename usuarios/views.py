@@ -23,22 +23,19 @@ def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
         edad=edad,
         telefono=telefono,
         sexo=sexo,
-        foto=foto
+        foto=foto,
     )
     nuevo_usuario.save()
     print(f"> Usuario agregado con éxito: documento={documento}, clave={clave}, tipo={tipo}, nombre={nombre}, edad={edad}, telefono={telefono}, sexo={sexo}, foto={foto}")
 
-#agregar_usuario('1092524481', '123', 'profesionalSalud','Jefferson Hernandez','20', '3023464345', 'Masculino', 'https://i.ibb.co/ZGqCFwb/carlitos.png')
 
 
- # Asegúrate de importar el modelo de Usuario desde tu aplicación
 def obtener_usuario_por_documento(documento):
     try:
         usuario = Usuario.objects.get(documento=documento)
         return usuario
     except Usuario.DoesNotExist:
         return None
-
 
 def agregar_paciente_a_medico(documento_medico, documento_paciente):
     try:
@@ -48,17 +45,30 @@ def agregar_paciente_a_medico(documento_medico, documento_paciente):
 
         paciente.medico.add(medico)
 
-        return True  # Devuelve True si la operación fue exitosa
+        print("Paciente agregado con exito")  # Devuelve True si la operación fue exitosa
     except Usuario.DoesNotExist:
         # El médico o el paciente no existen en la base de datos
-        return False  # Devuelve False si hay un error
+        print("Paciente NO se agrego con exito")  # Devuelve True si la operación fue exitosa
+    
+#agregar_usuario('1092524481', '123', 'profesionalSalud','Jefferson Hernandez','20', '3023464345', 'Masculino', 'https://i.ibb.co/ZGqCFwb/carlitos.png')
+agregar_usuario('1234567890', '123', 'profesionalSalud', 'Carlos Muñoz', '20', '3164614926', 'Masculino', 'https://i.ibb.co/ZGqCFwb/carlitos.png')
+agregar_usuario('0987654321', '123', 'paciente', 'Harold Samuel Hernandez', '25', '323232323232', 'Masculino', 'https://i.ibb.co/ZgNP89g/image-2023-10-20-103230643.png')
+agregar_usuario('3232323232', '123', 'paciente', 'Luis Andres Garcia', '45', '31202034044', 'Masculino', 'https://i.ibb.co/BsMgQnH/image-2023-10-20-102702811.png')
+agregar_usuario('2323232232', '123', 'director', 'Claudia Patricia Suarez', '50', '323232332', 'Femenino', 'https://i.ibb.co/3ydfwNR/image-2023-10-20-102845276.png')
+agregar_paciente_a_medico('1234567890', '0987654321')
 
+def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, tipo, descripcion):
 
-
-def agregar_adenda_a_usuario(documento, fecha, tipo, descripcion):
     try:
         # Buscar el usuario por documento
-        usuario = Usuario.objects.get(documento=documento)
+        usuario = Usuario.objects.get(documento=documento_paciente)
+
+        # Verificar si el usuario tiene al profesional de salud
+        profesional = Usuario.objects.get(documento=documento_profesional)
+        
+        if not usuario.medico.filter(documento=documento_profesional).exists():
+            # Si el paciente no tiene al profesional de salud, devuelve None
+            return None
 
         # Verificar si el usuario tiene una historia clínica
         if not usuario.historia_clinica:
@@ -72,25 +82,9 @@ def agregar_adenda_a_usuario(documento, fecha, tipo, descripcion):
         adenda = Adenda(fecha=fecha, tipo=tipo, descripcion=descripcion, historia_clinica=usuario.historia_clinica)
         adenda.save()
         return adenda
+
     except Usuario.DoesNotExist:
-        # El usuario no existe en la base de datos
         return None
-
-
-
-
-class AutenticacionAPI(APIView):
-
-    def post(self, request):
-
-        documento = request.data.get('documento')
-        clave = request.data.get('clave')
-
-        respuesta, tipo = verificar_usuario(documento, clave)
-
-        respuesta_post = {'respuesta': respuesta, 'tipo': tipo}
-
-        return Response(respuesta_post, status=status.HTTP_200_OK)
 
 class UsuarioAPI(APIView):
 
@@ -120,6 +114,22 @@ class UsuarioAPI(APIView):
 
         # Responder con el diccionario en formato JSON
         respuesta_post = usuario_dict
+        return Response(respuesta_post, status=status.HTTP_200_OK)
+    
+class agregarAdendaAPI(APIView):
+
+    def post(self, request):
+
+        documento_paciente = request.data.get('documento_paciente')
+        documento_profesional = request.data.get('documento_profesional')
+        fecha = request.data.get('fecha')
+        tipo = request.data.get('tipo')
+        descripcion = request.data.get('descripcion')
+
+        respuesta = agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, tipo, descripcion)
+
+        respuesta_post = {'adenda': respuesta}
+
         return Response(respuesta_post, status=status.HTTP_200_OK)
 
 
