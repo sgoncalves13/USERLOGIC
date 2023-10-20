@@ -28,7 +28,7 @@ def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
     nuevo_usuario.save()
     print(f"> Usuario agregado con éxito: documento={documento}, clave={clave}, tipo={tipo}, nombre={nombre}, edad={edad}, telefono={telefono}, sexo={sexo}, foto={foto}")
 
-agregar_usuario('1092524481', '123', 'profesionalSalud','Jefferson Hernandez','20', '3023464345', 'Masculino', 'https://i.ibb.co/ZGqCFwb/carlitos.png')
+#agregar_usuario('1092524481', '123', 'profesionalSalud','Jefferson Hernandez','20', '3023464345', 'Masculino', 'https://i.ibb.co/ZGqCFwb/carlitos.png')
 
 
  # Asegúrate de importar el modelo de Usuario desde tu aplicación
