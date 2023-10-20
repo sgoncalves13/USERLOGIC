@@ -93,7 +93,7 @@ class AutenticacionAPI(APIView):
 
 class UsuarioAPI(APIView):
 
-    def consultar_usuario(self, request):
+    def post(self, request):
         # Obtener el documento de usuario desde la solicitud
         documento = request.data.get('documento')
 
