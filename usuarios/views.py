@@ -82,12 +82,19 @@ def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, t
         adenda = Adenda(fecha=fecha, tipo=tipo, descripcion=descripcion, historia_clinica=usuario.historia_clinica)
         adenda.save()
 
+        historia_clinica_data = {
+            'id_hc': nueva_historia_clinica.id_hc,
+            'diagnosticos': nueva_historia_clinica.diagnosticos,
+            'tratamientos': nueva_historia_clinica.tratamientos,
+            'notas': nueva_historia_clinica.notas
+        }
+
         adenda_data = {
             'id': adenda.id_adenda,
             'fecha': adenda.fecha,
             'tipo': adenda.tipo,
             'descripcion': adenda.descripcion,
-            'historia_clinica': adenda.historia_clinica
+            'historia_clinica': historia_clinica_data
         }
 
         return adenda_data
