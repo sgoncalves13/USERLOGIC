@@ -91,5 +91,35 @@ class AutenticacionAPI(APIView):
 
         return Response(respuesta_post, status=status.HTTP_200_OK)
 
+class UsuarioAPI(APIView):
+
+    def consultar_usuario(self, request):
+        # Obtener el documento de usuario desde la solicitud
+        documento = request.data.get('documento')
+
+        # Realizar una consulta a la base de datos para obtener el usuario
+        try:
+            usuario = Usuario.objects.get(documento=documento)
+        except Usuario.DoesNotExist:
+            # Manejar el caso en el que el usuario no existe
+            respuesta_post = {'error': 'Usuario no encontrado'}
+            return Response(respuesta_post, status=status.HTTP_404_NOT_FOUND)
+
+        # Crear un diccionario con los atributos del usuario
+        usuario_dict = {
+            'documento': usuario.documento,
+            'clave': usuario.clave,
+            'tipo': usuario.tipo,
+            'nombre': usuario.nombre,
+            'edad': usuario.edad,
+            'telefono': usuario.telefono,
+            'sexo': usuario.sexo,
+            'foto': usuario.foto  # Añade más atributos según sea necesario
+        }
+
+        # Responder con el diccionario en formato JSON
+        respuesta_post = {'usuario': usuario_dict}
+        return Response(respuesta_post, status=status.HTTP_200_OK)
+
 
 
