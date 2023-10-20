@@ -14,7 +14,7 @@ def verificar_usuario(documento, clave):
 
     return respuesta, tipo
 
-def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo):
+def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
     nuevo_usuario = Usuario(
         documento=documento,
         clave=clave,
@@ -22,10 +22,11 @@ def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo):
         nombre=nombre,
         edad=edad,
         telefono=telefono,
-        sexo=sexo
+        sexo=sexo,
+        foto=foto
     )
     nuevo_usuario.save()
-    print(f"> Usuario agregado con éxito: documento={documento}, clave={clave}, tipo={tipo}, nombre={nombre}, edad={edad}, telefono={telefono}, sexo={sexo}")
+    print(f"> Usuario agregado con éxito: documento={documento}, clave={clave}, tipo={tipo}, nombre={nombre}, edad={edad}, telefono={telefono}, sexo={sexo}, foto={foto}")
 
 
 
@@ -36,6 +37,22 @@ def obtener_usuario_por_documento(documento):
         return usuario
     except Usuario.DoesNotExist:
         return None
+
+
+def agregar_paciente_a_medico(documento_medico, documento_paciente):
+    try:
+        # Buscar al médico y al paciente por sus documentos
+        medico = Usuario.objects.get(documento=documento_medico)
+        paciente = Usuario.objects.get(documento=documento_paciente)
+
+        paciente.medico.add(medico)
+
+        return True  # Devuelve True si la operación fue exitosa
+    except Usuario.DoesNotExist:
+        # El médico o el paciente no existen en la base de datos
+        return False  # Devuelve False si hay un error
+
+
 
 def agregar_adenda_a_usuario(documento, fecha, tipo, descripcion):
     try:

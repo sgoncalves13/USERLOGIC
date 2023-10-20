@@ -1,5 +1,11 @@
 from django.db import models
 
+class HistoriaClinica(models.Model):
+    id_hc = models.AutoField(primary_key=True)
+    diagnosticos = models.CharField(max_length=None)
+    tratamientos = models.CharField(max_length=None)
+    notas = models.CharField(max_length=None)
+
 class Usuario(models.Model):
     documento = models.CharField(max_length=15, primary_key=True)
     clave = models.CharField(max_length=30)
@@ -8,13 +14,9 @@ class Usuario(models.Model):
     edad = models.CharField(max_length=30)
     telefono = models.CharField(max_length=30)
     sexo = models.CharField(max_length=30)
-    historia_clinica = models.OneToOneField('HistoriaClinica', on_delete=models.CASCADE, related_name='usuario', null=True, blank=True)
-
-class HistoriaClinica(models.Model):
-    id_hc = models.AutoField(primary_key=True)
-    diagnosticos = models.CharField(max_length=None)
-    tratamientos = models.CharField(max_length=None)
-    notas = models.CharField(max_length=None)
+    foto = models.CharField(max_length=255)
+    historia_clinica = models.OneToOneField(HistoriaClinica, on_delete=models.CASCADE, related_name='usuario', null=True, blank=True)
+    medico = models.ManyToManyField('self', blank=True, symmetrical=False, related_name='pacientes')
 
 class Adenda(models.Model):
     id_adenda = models.AutoField(primary_key=True)
