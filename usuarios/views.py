@@ -81,7 +81,16 @@ def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, t
         # Ahora, puedes crear la adenda y asociarla a la historia clínica
         adenda = Adenda(fecha=fecha, tipo=tipo, descripcion=descripcion, historia_clinica=usuario.historia_clinica)
         adenda.save()
-        return adenda
+
+        adenda_data = {
+            'id': adenda.id_adenda,
+            'fecha': adenda.fecha,
+            'tipo': adenda.tipo,
+            'descripcion': adenda.descripcion,
+            'historia_clinica': adenda.historia_clinica
+        }
+
+        return adenda_data
 
     except Usuario.DoesNotExist:
         return None
