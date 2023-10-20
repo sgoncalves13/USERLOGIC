@@ -119,7 +119,7 @@ class UsuarioAPI(APIView):
         }
 
         # Responder con el diccionario en formato JSON
-        respuesta_post = {'usuario': usuario_dict}
+        respuesta_post = usuario_dict
         return Response(respuesta_post, status=status.HTTP_200_OK)
 
 
