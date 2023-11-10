@@ -49,10 +49,21 @@ def agregar_paciente_a_medico(documento_medico, documento_paciente):
     except Usuario.DoesNotExist:
         # El médico o el paciente no existen en la base de datos
         print("Paciente NO se agrego con exito")  # Devuelve True si la operación fue exitosa
+
+def eliminar_usuario_por_documento(documento):
+    try:
+        # Buscar el usuario por su documento
+        usuario = Usuario.objects.get(documento=documento)
+        # Eliminar el usuario
+        usuario.delete()
+        return "Usuario eliminado con éxito."
+    except Usuario.DoesNotExist:
+        return "Usuario no encontrado."
     
 #agregar_usuario('1092524481', '123', 'profesionalSalud','Jefferson Hernandez','20', '3023464345', 'Masculino', 'https://i.ibb.co/ZGqCFwb/carlitos.png')
 #agregar_usuario('1234567890', '123', 'profesionalSalud', 'Carlos Muñoz', '20', '3164614926', 'Masculino', 'https://i.ibb.co/ZGqCFwb/carlitos.png')
-#agregar_usuario('0987654321', '123', 'paciente', 'Harold Samuel Hernandez', '25', '323232323232', 'Masculino', 'https://i.ibb.co/ZgNP89g/image-2023-10-20-103230643.png')
+eliminar_usuario_por_documento('0987654321')
+agregar_usuario('0987654321', '123', 'paciente', 'Harold Samuel Hernandez', '25', '323232323232', 'Masculino', 'https://i.ibb.co/ZgNP89g/image-2023-10-20-103230643.png')
 #agregar_usuario('3232323232', '123', 'paciente', 'Luis Andres Garcia', '45', '31202034044', 'Masculino', 'https://i.ibb.co/BsMgQnH/image-2023-10-20-102702811.png')
 #agregar_usuario('2323232232', '123', 'director', 'Claudia Patricia Suarez', '50', '323232332', 'Femenino', 'https://i.ibb.co/3ydfwNR/image-2023-10-20-102845276.png')
 #agregar_paciente_a_medico('1234567890', '0987654321')
