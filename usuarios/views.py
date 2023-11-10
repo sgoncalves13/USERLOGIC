@@ -72,8 +72,11 @@ def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, t
 
         # Verificar si el usuario tiene una historia clínica
         if not usuario.historia_clinica:
-            # Si el usuario no tiene una historia clínica, crea una nueva y asígnala al usuario
-            nueva_historia_clinica = HistoriaClinica()
+            nueva_historia_clinica = HistoriaClinica(
+            diagnosticos="Ninguno",
+            tratamientos="Ninguno",
+            notas="Ninguno"
+            )
             nueva_historia_clinica.save()
             usuario.historia_clinica = nueva_historia_clinica
             usuario.save()
