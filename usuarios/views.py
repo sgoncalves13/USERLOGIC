@@ -37,24 +37,6 @@ def obtener_usuario_por_documento(documento):
     except Usuario.DoesNotExist:
         return None
     
-def obtener_adendas_usuario(request, documento):
-    try:
-        # Buscar el usuario por su documento
-        usuario = Usuario.objects.get(documento=documento)
-        # Obtener la historia clínica asociada al usuario
-        historia_clinica = usuario.historia_clinica
-        if historia_clinica:
-            # Obtener todas las adendas asociadas a la historia clínica
-            adendas = Adenda.objects.filter(historia_clinica=historia_clinica)
-            # Formatear y devolver la respuesta
-            respuesta = "\n".join([f"Adenda ID: {adenda.id_adenda}, Fecha: {adenda.fecha}, Tipo: {adenda.tipo}, Descripción: {adenda.descripcion}" for adenda in adendas])
-            return respuesta
-        else:
-            return "El usuario no tiene una historia clínica asociada."
-    except Usuario.DoesNotExist:
-        return "Usuario no encontrado."
-
-
 def agregar_paciente_a_medico(documento_medico, documento_paciente):
     try:
         # Buscar al médico y al paciente por sus documentos
@@ -134,6 +116,28 @@ class UsuarioAPI(APIView):
             respuesta_post = {'error': 'Usuario no encontrado'}
             return Response(respuesta_post, status=status.HTTP_404_NOT_FOUND)
 
+        # Si el usuario tiene una historia clínica, obtener las adendas
+        adendas_list = []
+        if usuario.historia_clinica:
+            adendas = Adenda.objects.filter(historia_clinica=usuario.historia_clinica)
+            adendas_list = [
+                {
+                    "id_adenda": adenda.id_adenda,
+                    "fecha": adenda.fecha,
+                    "tipo": adenda.tipo,
+                    "descripcion": adenda.descripcion
+                } for adenda in adendas
+            ]
+
+        dict_historiaclinica = {}
+        if usuario.historia_clinica:
+            hc = usuario.historia_clinica
+            dict_historiaclinica["id"] = hc.id_hc
+            dict_historiaclinica["diagnosticos"] = hc.diagnosticos
+            dict_historiaclinica["tratamientos"] = hc.tratamientos
+            dict_historiaclinica["notas"] = hc.notas
+
+
         # Crear un diccionario con los atributos del usuario
         usuario_dict = {
             'documento': usuario.documento,
@@ -143,7 +147,9 @@ class UsuarioAPI(APIView):
             'edad': usuario.edad,
             'telefono': usuario.telefono,
             'sexo': usuario.sexo,
-            'foto': usuario.foto  # Añade más atributos según sea necesario
+            'foto': usuario.foto, 
+            'historia_clinica' : dict_historiaclinica,
+            'adendas': adendas_list  # Añadir las adendas aquí
         }
 
         # Responder con el diccionario en formato JSON
