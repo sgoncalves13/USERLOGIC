@@ -36,6 +36,24 @@ def obtener_usuario_por_documento(documento):
         return usuario
     except Usuario.DoesNotExist:
         return None
+    
+def obtener_adendas_usuario(request, documento):
+    try:
+        # Buscar el usuario por su documento
+        usuario = Usuario.objects.get(documento=documento)
+        # Obtener la historia clínica asociada al usuario
+        historia_clinica = usuario.historia_clinica
+        if historia_clinica:
+            # Obtener todas las adendas asociadas a la historia clínica
+            adendas = Adenda.objects.filter(historia_clinica=historia_clinica)
+            # Formatear y devolver la respuesta
+            respuesta = "\n".join([f"Adenda ID: {adenda.id_adenda}, Fecha: {adenda.fecha}, Tipo: {adenda.tipo}, Descripción: {adenda.descripcion}" for adenda in adendas])
+            return respuesta
+        else:
+            return "El usuario no tiene una historia clínica asociada."
+    except Usuario.DoesNotExist:
+        return "Usuario no encontrado."
+
 
 def agregar_paciente_a_medico(documento_medico, documento_paciente):
     try:
