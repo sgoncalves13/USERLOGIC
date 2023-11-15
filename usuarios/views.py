@@ -66,7 +66,7 @@ eliminar_usuario_por_documento('0987654321')
 agregar_usuario('0987654321', '123', 'paciente', 'Harold Samuel Hernandez', '25', '323232323232', 'Masculino', 'https://i.ibb.co/ZgNP89g/image-2023-10-20-103230643.png')
 #agregar_usuario('3232323232', '123', 'paciente', 'Luis Andres Garcia', '45', '31202034044', 'Masculino', 'https://i.ibb.co/BsMgQnH/image-2023-10-20-102702811.png')
 #agregar_usuario('2323232232', '123', 'director', 'Claudia Patricia Suarez', '50', '323232332', 'Femenino', 'https://i.ibb.co/3ydfwNR/image-2023-10-20-102845276.png')
-#agregar_paciente_a_medico('1234567890', '0987654321')
+agregar_paciente_a_medico('1234567890', '0987654321')
 
 def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, tipo, descripcion):
 
@@ -185,6 +185,31 @@ class agregarAdendaAPI(APIView):
         respuesta_post = {'adenda': respuesta}
 
         return Response(respuesta_post, status=status.HTTP_200_OK)
+    
+class ListaPacientesAPI(APIView):
+
+    def post(self, request, documento_medico):
+        try:
+            # Obtener el objeto médico a partir del documento
+            medico = Usuario.objects.get(documento=documento_medico)
+
+            # Obtener todos los pacientes asociados a este médico
+            pacientes = medico.pacientes.all()
+
+            # Crear una lista para almacenar la información de los pacientes
+            lista_pacientes = []
+            for paciente in pacientes:
+                lista_pacientes.append({
+                    'documento': paciente.documento,
+                    'nombre': paciente.nombre
+                })
+
+            # Retornar la lista de pacientes
+            return Response(lista_pacientes, status=status.HTTP_200_OK)
+
+        except Usuario.DoesNotExist:
+            # Manejar el caso en que el médico no exista
+            return Response({'error': 'Médico no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
 
 
