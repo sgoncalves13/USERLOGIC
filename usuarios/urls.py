@@ -1,8 +1,8 @@
 from django.urls import path
-from .views import agregarAdendaAPI, UsuarioAPI, ListaPacientesAPI
+from .views import agregarAdendaAPI, usuarioAPI, historiaClinicaAPI
 
 urlpatterns = [
-    path('agregarAdenda/', agregarAdendaAPI.as_view()),
-    path('usuario/', UsuarioAPI.as_view()),
-    path('medico/<str:documento_medico>/pacientes/', ListaPacientesAPI.as_view(), name='listar_pacientes_api'),
+    path("agregar_adenda/", agregarAdendaAPI.as_view()),
+    path("usuario/", usuarioAPI.as_view()),
+    path("historia_clinica/", historiaClinicaAPI.as_view())
 ]

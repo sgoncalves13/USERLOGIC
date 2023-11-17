@@ -3,19 +3,23 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Usuario, Adenda, HistoriaClinica
 
-def verificar_usuario(documento, clave):
+def obtener_usuario_por_documento(documento):
     try:
-        usuario = Usuario.objects.get(documento=documento, clave=clave)
-        respuesta = "valido"
-        tipo = usuario.tipo
+        usuario = Usuario.objects.get(documento=documento)
+        return usuario
     except Usuario.DoesNotExist:
-        respuesta = "invalido"
-        tipo = ""
-
-    return respuesta, tipo
-
+        return None
+    
+def eliminar_usuario_por_documento(documento):
+    try:
+        usuario = Usuario.objects.get(documento=documento)
+        usuario.delete()
+        return usuario
+    except Usuario.DoesNotExist:
+        return None
+    
 def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
-    nuevo_usuario = Usuario(
+    usuario = Usuario(
         documento=documento,
         clave=clave,
         tipo=tipo,
@@ -25,48 +29,17 @@ def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
         sexo=sexo,
         foto=foto,
     )
-    nuevo_usuario.save()
-    print(f"> Usuario agregado con éxito: documento={documento}, clave={clave}, tipo={tipo}, nombre={nombre}, edad={edad}, telefono={telefono}, sexo={sexo}, foto={foto}")
-
-
-
-def obtener_usuario_por_documento(documento):
+    usuario.save()
+    return usuario
+    
+def agregar_paciente_a_medico(documento_profesional, documento_paciente):
     try:
-        usuario = Usuario.objects.get(documento=documento)
-        return usuario
+        profesional = Usuario.objects.get(documento=documento_profesional)
+        paciente = Usuario.objects.get(documento=documento_paciente)
+        paciente.medico.add(profesional)
+        return paciente
     except Usuario.DoesNotExist:
         return None
-    
-def agregar_paciente_a_medico(documento_medico, documento_paciente):
-    try:
-        # Buscar al médico y al paciente por sus documentos
-        medico = Usuario.objects.get(documento=documento_medico)
-        paciente = Usuario.objects.get(documento=documento_paciente)
-
-        paciente.medico.add(medico)
-
-        print("Paciente agregado con exito")  # Devuelve True si la operación fue exitosa
-    except Usuario.DoesNotExist:
-        # El médico o el paciente no existen en la base de datos
-        print("Paciente NO se agrego con exito")  # Devuelve True si la operación fue exitosa
-
-def eliminar_usuario_por_documento(documento):
-    try:
-        # Buscar el usuario por su documento
-        usuario = Usuario.objects.get(documento=documento)
-        # Eliminar el usuario
-        usuario.delete()
-        return "Usuario eliminado con éxito."
-    except Usuario.DoesNotExist:
-        return "Usuario no encontrado."
-    
-#agregar_usuario('1092524481', '123', 'profesionalSalud','Jefferson Hernandez','20', '3023464345', 'Masculino', 'https://i.ibb.co/ZGqCFwb/carlitos.png')
-#agregar_usuario('1234567890', '123', 'profesionalSalud', 'Carlos Muñoz', '20', '3164614926', 'Masculino', 'https://i.ibb.co/ZGqCFwb/carlitos.png')
-eliminar_usuario_por_documento('0987654321')
-agregar_usuario('0987654321', '123', 'paciente', 'Harold Samuel Hernandez', '25', '323232323232', 'Masculino', 'https://i.ibb.co/ZgNP89g/image-2023-10-20-103230643.png')
-#agregar_usuario('3232323232', '123', 'paciente', 'Luis Andres Garcia', '45', '31202034044', 'Masculino', 'https://i.ibb.co/BsMgQnH/image-2023-10-20-102702811.png')
-#agregar_usuario('2323232232', '123', 'director', 'Claudia Patricia Suarez', '50', '323232332', 'Femenino', 'https://i.ibb.co/3ydfwNR/image-2023-10-20-102845276.png')
-agregar_paciente_a_medico('1234567890', '0987654321')
 
 def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, tipo, descripcion):
 
@@ -116,7 +89,7 @@ def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, t
     except Usuario.DoesNotExist:
         return None
 
-class UsuarioAPI(APIView):
+class usuarioAPI(APIView):
 
     def post(self, request):
         # Obtener el documento de usuario desde la solicitud
@@ -186,30 +159,26 @@ class agregarAdendaAPI(APIView):
 
         return Response(respuesta_post, status=status.HTTP_200_OK)
     
-class ListaPacientesAPI(APIView):
+class historiaClinicaAPI(APIView):
 
-    def post(self, request, documento_medico):
-        try:
-            # Obtener el objeto médico a partir del documento
-            medico = Usuario.objects.get(documento=documento_medico)
+    def post(self, request):
 
-            # Obtener todos los pacientes asociados a este médico
-            pacientes = medico.pacientes.all()
+        pass
 
-            # Crear una lista para almacenar la información de los pacientes
-            lista_pacientes = []
-            for paciente in pacientes:
-                lista_pacientes.append({
-                    'documento': paciente.documento,
-                    'nombre': paciente.nombre
-                })
+# Inicialiación de la Base de Datos
+eliminar_usuario_por_documento("1234567890")
+eliminar_usuario_por_documento("0987654321")
+agregar_usuario("1234567890", "123", "profesionalSalud", "Carlos Muñoz", "20", "3164614926", "Masculino", "https://i.ibb.co/ZGqCFwb/carlitos.png")
+agregar_usuario("0987654321", "123", "paciente", "Harold Samuel Hernandez", "25", "323232323232", "Masculino", "https://i.ibb.co/ZgNP89g/image-2023-10-20-103230643.png")
+agregar_paciente_a_medico('1234567890', '0987654321')
 
-            # Retornar la lista de pacientes
-            return Response(lista_pacientes, status=status.HTTP_200_OK)
+eliminar_usuario_por_documento("1092524481")
+eliminar_usuario_por_documento("88152239")
+eliminar_usuario_por_documento("27897251")
+agregar_usuario("1092524481", "123", "profesionalSalud", "Jefferson Hernandez", "20", "3023464345", "Masculino", "https://i.ibb.co/ZGqCFwb/carlitos.png")
+agregar_usuario("88152239", "123", "paciente", "Luis Andres Garcia", "45", "3208410532", "Masculino", "https://i.ibb.co/BsMgQnH/image-2023-10-20-102702811.png")
+agregar_usuario("27897251", "123", "director", "Claudia Patricia Suarez", "50", "3043757337", "Femenino", "https://i.ibb.co/3ydfwNR/image-2023-10-20-102845276.png")
 
-        except Usuario.DoesNotExist:
-            # Manejar el caso en que el médico no exista
-            return Response({'error': 'Médico no encontrado'}, status=status.HTTP_404_NOT_FOUND)
-
-
-
+print("")
+print("> Base de datos inicializada con éxito")
+print("")
