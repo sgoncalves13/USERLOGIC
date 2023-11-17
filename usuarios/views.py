@@ -53,10 +53,11 @@ def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, t
             return "true"
 
         if not usuario.historia_clinica:
+
             nueva_historia_clinica = HistoriaClinica(
-            diagnosticos="Ninguno",
-            tratamientos="Ninguno",
-            notas="Ninguno"
+                diagnosticos="Ninguno",
+                tratamientos="Ninguno",
+                notas="Ninguno"
             )
             nueva_historia_clinica.save()
             usuario.historia_clinica = nueva_historia_clinica
