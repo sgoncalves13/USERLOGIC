@@ -1,3 +1,6 @@
+import json
+import jwt
+import hashlib
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -92,18 +95,30 @@ def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, t
 class usuarioAPI(APIView):
 
     def post(self, request):
-        # Obtener el documento de usuario desde la solicitud
-        documento = request.data.get('documento')
 
-        # Realizar una consulta a la base de datos para obtener el usuario
+        documento = request.data.get("documento")
+
         try:
             usuario = Usuario.objects.get(documento=documento)
         except Usuario.DoesNotExist:
-            # Manejar el caso en el que el usuario no existe
-            respuesta_post = {'error': 'Usuario no encontrado'}
-            return Response(respuesta_post, status=status.HTTP_404_NOT_FOUND)
+            respuesta_post = {}
+            return Response(respuesta_post, status=status.HTTP_200_OK)
 
-        # Si el usuario tiene una historia clínica, obtener las adendas
+        usuario = {
+            "documento": usuario.documento,
+            "foto": usuario.foto,
+            "nombre": usuario.nombre,
+            "edad": usuario.edad,
+            "telefono": usuario.telefono,
+            "sexo": usuario.sexo,
+        }
+
+        return Response(usuario, status=status.HTTP_200_OK)
+    
+class historiaClinicaAPI(APIView):
+
+    def post(self, request):
+
         adendas_list = []
         if usuario.historia_clinica:
             adendas = Adenda.objects.filter(historia_clinica=usuario.historia_clinica)
@@ -124,46 +139,30 @@ class usuarioAPI(APIView):
             dict_historiaclinica["tratamientos"] = hc.tratamientos
             dict_historiaclinica["notas"] = hc.notas
 
-
-        # Crear un diccionario con los atributos del usuario
-        usuario_dict = {
-            'documento': usuario.documento,
-            'clave': usuario.clave,
-            'tipo': usuario.tipo,
-            'nombre': usuario.nombre,
-            'edad': usuario.edad,
-            'telefono': usuario.telefono,
-            'sexo': usuario.sexo,
-            'foto': usuario.foto, 
-            'historia_clinica' : dict_historiaclinica,
-            'adendas': adendas_list  # Añadir las adendas aquí
-        }
-
-        # Responder con el diccionario en formato JSON
-        respuesta_post = usuario_dict
-        return Response(respuesta_post, status=status.HTTP_200_OK)
+        pass
     
 class agregarAdendaAPI(APIView):
 
     def post(self, request):
 
-        documento_paciente = request.data.get('documento_paciente')
-        documento_profesional = request.data.get('documento_profesional')
-        fecha = request.data.get('fecha')
-        tipo = request.data.get('tipo')
-        descripcion = request.data.get('descripcion')
+        documento_paciente = request.data.get("documento_paciente")
+        documento_profesional = request.data.get("documento_profesional")
+        fecha = request.data.get("fecha")
+        tipo = request.data.get("tipo")
+        descripcion = request.data.get("descripcion")
 
-        respuesta = agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, tipo, descripcion)
+        informacion_adenda = {"documento_paciente": documento_paciente, "documento_profesional": documento_profesional, "fecha": fecha, "tipo": tipo, "descripcion": descripcion}
+        informacion_firma = json.dumps(informacion_adenda, sort_keys=True)
 
-        respuesta_post = {'adenda': respuesta}
+        firma_calculada = hashlib.sha256(informacion_firma.encode()).hexdigest()
+        firma_mensaje = request.data.get("firma")
 
-        return Response(respuesta_post, status=status.HTTP_200_OK)
-    
-class historiaClinicaAPI(APIView):
+        if firma_calculada == firma_mensaje:
+            mensaje = agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, tipo, descripcion)
+        else:
+            mensaje = "manipulado"
 
-    def post(self, request):
-
-        pass
+        return Response({"mensaje":mensaje}, status=status.HTTP_200_OK)
 
 # Inicialiación de la Base de Datos
 eliminar_usuario_por_documento("1234567890")
