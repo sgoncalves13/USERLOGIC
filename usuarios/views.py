@@ -1,10 +1,25 @@
 import json
 import jwt
+from django.conf import settings
 import hashlib
+from secrets import token_bytes
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
+from base64 import urlsafe_b64encode, urlsafe_b64decode
 from .models import Usuario, Adenda, HistoriaClinica
+
+def encriptarMensaje(mensaje, llave):
+
+    backend = default_backend()
+    cipher = Cipher(algorithms.AES(llave), modes.CFB, backend=backend)
+    encryptor = cipher.encryptor()
+
+    ciphertext = encryptor.update(mensaje.encode()) + encryptor.finalize()
+
+    return urlsafe_b64encode(ciphertext).decode()
 
 def obtener_usuario_por_documento(documento):
     try:
@@ -80,8 +95,7 @@ class usuarioAPI(APIView):
         try:
             usuario = Usuario.objects.get(documento=documento)
         except Usuario.DoesNotExist:
-            respuesta_post = {}
-            return Response(respuesta_post, status=status.HTTP_200_OK)
+            return Response({"mensaje": "noexiste"}, status=status.HTTP_200_OK)
 
         usuario = {
             "documento": usuario.documento,
@@ -98,27 +112,46 @@ class historiaClinicaAPI(APIView):
 
     def post(self, request):
 
-        adendas_list = []
-        if usuario.historia_clinica:
-            adendas = Adenda.objects.filter(historia_clinica=usuario.historia_clinica)
-            adendas_list = [
-                {
-                    "id_adenda": adenda.id_adenda,
-                    "fecha": adenda.fecha,
-                    "tipo": adenda.tipo,
-                    "descripcion": adenda.descripcion
-                } for adenda in adendas
-            ]
+        try:
+            documento_paciente = request.data.get("documento_paciente")
+            documento_profesional = request.data.get("documento_profesional")
 
-        dict_historiaclinica = {}
-        if usuario.historia_clinica:
-            hc = usuario.historia_clinica
-            dict_historiaclinica["id"] = hc.id_hc
-            dict_historiaclinica["diagnosticos"] = hc.diagnosticos
-            dict_historiaclinica["tratamientos"] = hc.tratamientos
-            dict_historiaclinica["notas"] = hc.notas
+            paciente = Usuario.objects.get(documento=documento_paciente)
 
-        pass
+            if documento_profesional is not None:
+
+                if not paciente.medico.filter(documento=documento_profesional).exists():
+                    return Response({"mensaje":"true"}, status=status.HTTP_200_OK)
+
+            dict_historiaclinica = {}
+            if paciente.historia_clinica:
+
+                historia = paciente.historia_clinica
+
+                dict_historiaclinica["diagnosticos"] = historia.diagnosticos
+                dict_historiaclinica["tratamientos"] = historia.tratamientos
+                dict_historiaclinica["notas"] = historia.notas
+
+                adendas = Adenda.objects.filter(historia_clinica=historia)
+                adendas_list = [
+                    {
+                        "fecha": adenda.id_adenda,
+                        "tipo": adenda.fecha,
+                        "descripcion": adenda.descripcion
+                    } for adenda in adendas
+                ]
+
+                dict_historiaclinica["adendas"] = adendas_list
+
+            llave = token_bytes(32)
+            mensaje_decodificado = encriptarMensaje(dict_historiaclinica, llave)
+
+            llave_decodificada = jwt.encode(llave, settings.SECRET_KEY, algorithm="HS256")
+
+            return Response({"llave_codificada":llave_decodificada,"mensaje_codificado":mensaje_decodificado}, status=status.HTTP_200_OK)
+
+        except Usuario.DoesNotExist:
+            return Response({}, status=status.HTTP_200_OK)
     
 class agregarAdendaAPI(APIView):
 
