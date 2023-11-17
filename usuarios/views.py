@@ -47,17 +47,11 @@ def agregar_paciente_a_medico(documento_profesional, documento_paciente):
 def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, tipo, descripcion):
 
     try:
-        # Buscar el usuario por documento
         usuario = Usuario.objects.get(documento=documento_paciente)
-
-        # Verificar si el usuario tiene al profesional de salud
-        profesional = Usuario.objects.get(documento=documento_profesional)
         
         if not usuario.medico.filter(documento=documento_profesional).exists():
-            # Si el paciente no tiene al profesional de salud, devuelve None
-            return None
+            return "true"
 
-        # Verificar si el usuario tiene una historia clínica
         if not usuario.historia_clinica:
             nueva_historia_clinica = HistoriaClinica(
             diagnosticos="Ninguno",
@@ -68,29 +62,13 @@ def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, t
             usuario.historia_clinica = nueva_historia_clinica
             usuario.save()
 
-        # Ahora, puedes crear la adenda y asociarla a la historia clínica
         adenda = Adenda(fecha=fecha, tipo=tipo, descripcion=descripcion, historia_clinica=usuario.historia_clinica)
         adenda.save()
 
-        historia_clinica_data = {
-            'id_hc': usuario.historia_clinica.id_hc,
-            'diagnosticos': usuario.historia_clinica.diagnosticos,
-            'tratamientos': usuario.historia_clinica.tratamientos,
-            'notas': usuario.historia_clinica.notas
-        }
-
-        adenda_data = {
-            'id': adenda.id_adenda,
-            'fecha': adenda.fecha,
-            'tipo': adenda.tipo,
-            'descripcion': adenda.descripcion,
-            'historia_clinica': historia_clinica_data
-        }
-
-        return adenda_data
+        return None
 
     except Usuario.DoesNotExist:
-        return None
+        return "false"
 
 class usuarioAPI(APIView):
 
