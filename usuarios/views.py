@@ -163,6 +163,7 @@ class agregarAdendaAPI(APIView):
             mensaje = "manipulado"
 
         return Response({"mensaje":mensaje}, status=status.HTTP_200_OK)
+    
 
 # Inicialiación de la Base de Datos
 eliminar_usuario_por_documento("1234567890")
