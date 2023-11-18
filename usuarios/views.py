@@ -167,9 +167,11 @@ class agregarAdendaAPI(APIView):
         informacion_firma = json.dumps(informacion_adenda, sort_keys=True)
 
         firma_calculada = hashlib.sha256(informacion_firma.encode()).hexdigest()
-        firma_mensaje = request.data.get("firma")
 
-        if firma_calculada == firma_mensaje:
+        firma_mensaje_cifrada = request.data.get("firma")
+        decoded_firma = jwt.decode(firma_mensaje_cifrada, settings.SECRET_KEY, algorithms=["HS256"])
+
+        if firma_calculada == decoded_firma:
             mensaje = agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, tipo, descripcion)
         else:
             mensaje = "manipulado"
