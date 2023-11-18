@@ -11,7 +11,8 @@ from .models import Usuario, Adenda, HistoriaClinica
 
 def encriptarMensaje(mensaje, llave):
     f = Fernet(llave)
-    mensaje_cifrado = f.encrypt(mensaje.encode())
+    mensaje_json = json.dumps(mensaje)
+    mensaje_cifrado = f.encrypt(mensaje_json.encode()) 
     return mensaje_cifrado
 
 def obtener_usuario_por_documento(documento):
