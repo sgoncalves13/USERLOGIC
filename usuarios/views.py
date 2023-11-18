@@ -133,8 +133,8 @@ class historiaClinicaAPI(APIView):
                 adendas = Adenda.objects.filter(historia_clinica=historia)
                 adendas_list = [
                     {
-                        "fecha": adenda.id_adenda,
-                        "tipo": adenda.fecha,
+                        "fecha": adenda.fecha,
+                        "tipo": adenda.tipo,
                         "descripcion": adenda.descripcion
                     } for adenda in adendas
                 ]
