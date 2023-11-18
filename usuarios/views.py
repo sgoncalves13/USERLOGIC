@@ -143,11 +143,12 @@ class historiaClinicaAPI(APIView):
 
             llave = Fernet.generate_key()
             mensaje_codificado = encriptarMensaje(dict_historiaclinica, llave)
+            mensaje_codificado_base64 = bytes_a_base64(mensaje_codificado)
 
             llave_base64 = bytes_a_base64(llave)
             llave_codificada_jwt = jwt.encode({"llave": llave_base64}, settings.SECRET_KEY, algorithm="HS256")
 
-            return Response({"llave_codificada":llave_codificada_jwt,"mensaje_codificado":mensaje_codificado}, status=status.HTTP_200_OK)
+            return Response({"llave_codificada":llave_codificada_jwt,"mensaje_codificado":mensaje_codificado_base64}, status=status.HTTP_200_OK)
 
         except Usuario.DoesNotExist:
             return Response({}, status=status.HTTP_200_OK)
