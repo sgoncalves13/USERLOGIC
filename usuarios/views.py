@@ -6,27 +6,13 @@ from secrets import token_bytes
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.backends import default_backend
-from base64 import urlsafe_b64encode, urlsafe_b64decode
+from cryptography.fernet import Fernet
 from .models import Usuario, Adenda, HistoriaClinica
 
 def encriptarMensaje(mensaje, llave):
-    if len(llave) not in {16, 24, 32}:
-        raise ValueError("La longitud de la clave debe ser 16, 24 o 32 bytes")
-
-    if not isinstance(llave, str):
-        llave = llave.decode('latin-1') 
-
-    llave = hashlib.sha256(llave.encode()).digest()[:32]
-
-    backend = default_backend()
-    cipher = Cipher(algorithms.AES(llave), modes.CFB, backend=backend)
-    encryptor = cipher.encryptor()
-
-    ciphertext = encryptor.update(mensaje.encode()) + encryptor.finalize()
-
-    return urlsafe_b64encode(ciphertext).decode()
+    f = Fernet(llave)
+    mensaje_cifrado = f.encrypt(mensaje.encode())
+    return mensaje_cifrado
 
 def obtener_usuario_por_documento(documento):
     try:
@@ -150,7 +136,7 @@ class historiaClinicaAPI(APIView):
 
                 dict_historiaclinica["adendas"] = adendas_list
 
-            llave = token_bytes(32)
+            llave = Fernet.generate_key()
             mensaje_decodificado = encriptarMensaje(dict_historiaclinica, llave)
 
             llave_decodificada = jwt.encode(llave, settings.SECRET_KEY, algorithm="HS256")
