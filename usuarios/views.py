@@ -140,7 +140,7 @@ class historiaClinicaAPI(APIView):
             llave = Fernet.generate_key()
             mensaje_decodificado = encriptarMensaje(dict_historiaclinica, llave)
 
-            llave_decodificada = jwt.encode(llave, settings.SECRET_KEY, algorithm="HS256")
+            llave_decodificada = jwt.encode({"llave":llave}, settings.SECRET_KEY, algorithm="HS256")
 
             return Response({"llave_codificada":llave_decodificada,"mensaje_codificado":mensaje_decodificado}, status=status.HTTP_200_OK)
 
