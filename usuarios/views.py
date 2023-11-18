@@ -12,6 +12,10 @@ from base64 import urlsafe_b64encode, urlsafe_b64decode
 from .models import Usuario, Adenda, HistoriaClinica
 
 def encriptarMensaje(mensaje, llave):
+    if len(llave) not in {16, 24, 32}:
+        raise ValueError("La longitud de la clave debe ser 16, 24 o 32 bytes")
+
+    llave = hashlib.sha256(llave.encode()).digest()[:32]
 
     backend = default_backend()
     cipher = Cipher(algorithms.AES(llave), modes.CFB, backend=backend)
