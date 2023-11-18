@@ -1,5 +1,6 @@
 import json
 import jwt
+import base64
 from django.conf import settings
 import hashlib
 from secrets import token_bytes
@@ -79,6 +80,9 @@ def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, t
 
     except Usuario.DoesNotExist:
         return "false"
+    
+def bytes_a_base64(mensaje_bytes):
+    return base64.b64encode(mensaje_bytes).decode('utf-8')
 
 class usuarioAPI(APIView):
 
@@ -140,9 +144,10 @@ class historiaClinicaAPI(APIView):
             llave = Fernet.generate_key()
             mensaje_codificado = encriptarMensaje(dict_historiaclinica, llave)
 
-            llave_codificada = jwt.encode({"llave":llave}, settings.SECRET_KEY, algorithm="HS256")
+            llave_base64 = bytes_a_base64(llave)
+            llave_codificada_jwt = jwt.encode({"llave": llave_base64}, settings.SECRET_KEY, algorithm="HS256")
 
-            return Response({"llave_codificada":llave_codificada,"mensaje_codificado":mensaje_codificado}, status=status.HTTP_200_OK)
+            return Response({"llave_codificada":llave_codificada_jwt,"mensaje_codificado":mensaje_codificado}, status=status.HTTP_200_OK)
 
         except Usuario.DoesNotExist:
             return Response({}, status=status.HTTP_200_OK)
