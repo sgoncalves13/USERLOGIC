@@ -174,6 +174,9 @@ class agregarAdendaAPI(APIView):
 
         firma_mensaje_cifrada = request.data.get("firma_jwt")
 
+        if firma_mensaje_cifrada is None:
+            return Response({"mensaje":"La petición no es valida porque no cuenta con el hash de la información cifrado por el servidor"}, status=status.HTTP_200_OK)
+
         print(">Hash_Cifrado_Recibido:", firma_mensaje_cifrada)
         decoded_firma = jwt.decode(firma_mensaje_cifrada, settings.SECRET_KEY, algorithms=["HS256"])
 
