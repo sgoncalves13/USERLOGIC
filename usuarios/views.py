@@ -16,7 +16,7 @@ def encriptarMensaje(mensaje, llave):
         raise ValueError("La longitud de la clave debe ser 16, 24 o 32 bytes")
 
     if not isinstance(llave, str):
-        llave = llave.decode() 
+        llave = llave.decode('latin-1') 
 
     llave = hashlib.sha256(llave.encode()).digest()[:32]
 
