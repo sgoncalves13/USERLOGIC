@@ -164,12 +164,22 @@ class agregarAdendaAPI(APIView):
         descripcion = request.data.get("descripcion")
 
         informacion_adenda = {"documento_paciente": documento_paciente, "documento_profesional": documento_profesional, "fecha": fecha, "tipo": tipo, "descripcion": descripcion}
+        print("")
+        print(">Información_Recibida:", informacion_adenda)
         informacion_firma = json.dumps(informacion_adenda, sort_keys=True)
 
         firma_calculada = hashlib.sha256(informacion_firma.encode()).hexdigest()
 
+        print(">Hash_Calculado:", firma_calculada)
+
         firma_mensaje_cifrada = request.data.get("firma_jwt")
+
+        print(">Hash_Cifrado_Recibido:", firma_mensaje_cifrada)
         decoded_firma = jwt.decode(firma_mensaje_cifrada, settings.SECRET_KEY, algorithms=["HS256"])
+
+        print(">Hash_Decodificado_Recibido:", decoded_firma.get("firma"))
+        print(">Son iguales?:", firma_calculada == decoded_firma.get("firma"))
+        print("")
 
         if firma_calculada == decoded_firma.get("firma"):
             mensaje = agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, tipo, descripcion)
