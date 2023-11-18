@@ -193,6 +193,5 @@ agregar_usuario("1092524481", "123", "profesionalSalud", "Jefferson Hernandez", 
 agregar_usuario("88152239", "123", "paciente", "Luis Andres Garcia", "45", "3208410532", "Masculino", "https://i.ibb.co/BsMgQnH/image-2023-10-20-102702811.png")
 agregar_usuario("27897251", "123", "director", "Claudia Patricia Suarez", "50", "3043757337", "Femenino", "https://i.ibb.co/3ydfwNR/image-2023-10-20-102845276.png")
 
-print("")
 print("> Base de datos inicializada con éxito")
 print("")
