@@ -196,18 +196,18 @@ class agregarAdendaAPI(APIView):
     
 
 # Inicialiación de la Base de Datos
-eliminar_usuario_por_documento("1234567890")
-eliminar_usuario_por_documento("0987654321")
-agregar_usuario("1234567890", "123", "profesionalSalud", "Carlos Muñoz", "20", "3164614926", "Masculino", "https://i.ibb.co/ZGqCFwb/carlitos.png")
-agregar_usuario("0987654321", "123", "paciente", "Harold Samuel Hernandez", "25", "323232323232", "Masculino", "https://i.ibb.co/ZgNP89g/image-2023-10-20-103230643.png")
-agregar_paciente_a_medico('1234567890', '0987654321')
+#eliminar_usuario_por_documento("1234567890")
+#eliminar_usuario_por_documento("0987654321")
+#agregar_usuario("1234567890", "123", "profesionalSalud", "Carlos Muñoz", "20", "3164614926", "Masculino", "https://i.ibb.co/ZGqCFwb/carlitos.png")
+#agregar_usuario("0987654321", "123", "paciente", "Harold Samuel Hernandez", "25", "323232323232", "Masculino", "https://i.ibb.co/ZgNP89g/image-2023-10-20-103230643.png")
+#asignar_medico_a_paciente('1234567890', '0987654321')
 
-eliminar_usuario_por_documento("1092524481")
-eliminar_usuario_por_documento("88152239")
-eliminar_usuario_por_documento("27897251")
-agregar_usuario("1092524481", "123", "profesionalSalud", "Jefferson Hernandez", "20", "3023464345", "Masculino", "https://i.ibb.co/ZGqCFwb/carlitos.png")
-agregar_usuario("88152239", "123", "paciente", "Luis Andres Garcia", "45", "3208410532", "Masculino", "https://i.ibb.co/BsMgQnH/image-2023-10-20-102702811.png")
-agregar_usuario("27897251", "123", "director", "Claudia Patricia Suarez", "50", "3043757337", "Femenino", "https://i.ibb.co/3ydfwNR/image-2023-10-20-102845276.png")
+#eliminar_usuario_por_documento("1092524481")
+#eliminar_usuario_por_documento("88152239")
+#eliminar_usuario_por_documento("27897251")
+#agregar_usuario("1092524481", "123", "profesionalSalud", "Jefferson Hernandez", "20", "3023464345", "Masculino", "https://i.ibb.co/ZGqCFwb/carlitos.png")
+#agregar_usuario("88152239", "123", "paciente", "Luis Andres Garcia", "45", "3208410532", "Masculino", "https://i.ibb.co/BsMgQnH/image-2023-10-20-102702811.png")
+#agregar_usuario("27897251", "123", "director", "Claudia Patricia Suarez", "50", "3043757337", "Femenino", "https://i.ibb.co/3ydfwNR/image-2023-10-20-102845276.png")
 
 print("> Base de datos inicializada con éxito")
 print("")
