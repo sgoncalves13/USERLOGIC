@@ -50,7 +50,7 @@ def asignar_medico_a_paciente(documento_profesional, documento_paciente):
         profesional = Usuario.objects.get(documento=documento_profesional, tipo='profesionalSalud')
         paciente = Usuario.objects.get(documento=documento_paciente, tipo='paciente')
         if not paciente.medico:
-            paciente.medico = documento_profesional
+            paciente.medico = profesional
             paciente.save()
             
         return paciente
