@@ -12,7 +12,7 @@ class Adenda(models.Model):
     historia_clinica = models.ForeignKey(HistoriaClinica, on_delete=models.CASCADE, related_name='adendas')
 
 class Usuario(models.Model):
-    documento = models.CharField(primary_key=True, editable=False)
+    documento = models.CharField(max_length=15, primary_key=True, editable=False)
     clave = models.CharField(max_length=30, default='123')
     tipo = models.CharField(max_length=30, default='default')
     foto = models.CharField(max_length=255, default='default')
