@@ -45,11 +45,14 @@ def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
     usuario.save()
     return usuario
     
-def agregar_paciente_a_medico(documento_profesional, documento_paciente):
+def asignar_medico_a_paciente(documento_profesional, documento_paciente):
     try:
-        profesional = Usuario.objects.get(documento=documento_profesional)
-        paciente = Usuario.objects.get(documento=documento_paciente)
-        paciente.medico.add(profesional)
+        profesional = Usuario.objects.get(documento=documento_profesional, tipo='medico')
+        paciente = Usuario.objects.get(documento=documento_paciente, tipo='paciente')
+        if not paciente.medico:
+            paciente.medico = profesional
+            paciente.save()
+            
         return paciente
     except Usuario.DoesNotExist:
         return None
