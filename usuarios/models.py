@@ -21,4 +21,4 @@ class Usuario(models.Model):
     telefono = models.CharField(max_length=30, default='default')
     sexo = models.CharField(max_length=30, default='default')
     historia_clinica = models.OneToOneField(HistoriaClinica, on_delete=models.CASCADE, related_name='usuario', null=True, blank=True)
-    medico = models.OneToOneField('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='paciente', limit_choices_to={'tipo': 'paciente'})
+    medico = models.OneToOneField('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='paciente', limit_choices_to={'tipo': 'medico'})
