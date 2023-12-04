@@ -75,12 +75,9 @@ class usuarioAPI(APIView):
 
         documento = request.data.get("documento")
 
-        try:
-            usuario = Usuario.objects.get(documento=documento)
-        except Usuario.DoesNotExist:
-            return Response({"mensaje": "noexiste"}, status=status.HTTP_200_OK)
+        usuario = obtener_usuario_por_documento(documento)
 
-        usuario = {
+        dict_usuario = {
             "documento": usuario.documento,
             "foto": usuario.foto,
             "nombre": usuario.nombre,
@@ -89,8 +86,8 @@ class usuarioAPI(APIView):
             "sexo": usuario.sexo,
         }
 
-        return Response(usuario, status=status.HTTP_200_OK)
-    
+        return Response({"usuario":dict_usuario}, status=status.HTTP_200_OK)
+            
 class historiaClinicaAPI(APIView):
 
     def post(self, request):
@@ -101,10 +98,10 @@ class historiaClinicaAPI(APIView):
         historia = obtener_historia_por_documento(documento_paciente, documento_profesional)
 
         if historia:
-            dict_historiaclinica = {}
-            dict_historiaclinica["diagnosticos"] = historia.diagnosticos
-            dict_historiaclinica["tratamientos"] = historia.tratamientos
-            dict_historiaclinica["notas"] = historia.notas
+            dict_historia = {}
+            dict_historia["diagnosticos"] = historia.diagnosticos
+            dict_historia["tratamientos"] = historia.tratamientos
+            dict_historia["notas"] = historia.notas
             adendas = Adenda.objects.filter(historia_clinica=historia)
             adendas_list = [
                 {
@@ -113,8 +110,9 @@ class historiaClinicaAPI(APIView):
                     "descripcion": adenda.descripcion
                 } for adenda in adendas
             ]
-            dict_historiaclinica["adendas"] = adendas_list
-            return Response({"historia_clinica":dict_historiaclinica}, status=status.HTTP_200_OK)
+            dict_historia["adendas"] = adendas_list
+            
+            return Response({"historia_clinica":dict_historia}, status=status.HTTP_200_OK)
 
         return Response({}, status=status.HTTP_200_OK)
     
