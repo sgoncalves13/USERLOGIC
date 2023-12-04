@@ -62,7 +62,7 @@ def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, t
     try:
         usuario = Usuario.objects.get(documento=documento_paciente)
         
-        if not usuario.medico.filter(documento=documento_profesional).exists():
+        if usuario.medico is None or usuario.medico.documento != documento_profesional:
             return "true"
 
         if not usuario.historia_clinica:
