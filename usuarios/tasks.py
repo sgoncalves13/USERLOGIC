@@ -16,4 +16,5 @@ def agregar_usuario_lectura(documento):
 
 def eliminar_usuario_lectura(documento):
     usuario_lectura = UsuarioLectura.objects.get(documento=documento)
-    usuario_lectura.delete()
+    if usuario_lectura:
+        usuario_lectura.delete()
