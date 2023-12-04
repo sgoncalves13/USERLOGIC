@@ -22,3 +22,14 @@ class Usuario(models.Model):
     sexo = models.CharField(max_length=30, default='default')
     historia_clinica = models.OneToOneField(HistoriaClinica, on_delete=models.CASCADE, related_name='usuario', null=True, blank=True)
     medico = models.OneToOneField('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='paciente', limit_choices_to={'tipo': 'profesionalSalud'})
+
+class UsuarioLectura(models.Model):
+    documento = models.CharField(max_length=15, primary_key=True)
+    foto = models.CharField(max_length=255)
+    nombre = models.CharField(max_length=30)
+    edad = models.CharField(max_length=30)
+    telefono = models.CharField(max_length=30)
+    sexo = models.CharField(max_length=30)
+
+    class Meta:
+        managed = False  # Evita que Django cree tablas para este modelo

@@ -1,35 +1,25 @@
 import json
 import jwt
-import base64
 from django.conf import settings
 import hashlib
-from secrets import token_bytes
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from cryptography.fernet import Fernet
 from .models import Usuario, Adenda, HistoriaClinica
 
-def encriptarMensaje(mensaje, llave):
-    f = Fernet(llave)
-    mensaje_json = json.dumps(mensaje)
-    mensaje_cifrado = f.encrypt(mensaje_json.encode()) 
-    return mensaje_cifrado
-
 def obtener_usuario_por_documento(documento):
-    try:
-        usuario = Usuario.objects.get(documento=documento)
-        return usuario
-    except Usuario.DoesNotExist:
-        return None
+    usuario = Usuario.objects.get(documento=documento)
+    return usuario
     
-def eliminar_usuario_por_documento(documento):
-    try:
-        usuario = Usuario.objects.get(documento=documento)
-        usuario.delete()
-        return usuario
-    except Usuario.DoesNotExist:
-        return None
+def obtener_historia_por_documento(documento_paciente, documento_profesional):
+    usuario = Usuario.objects.get(documento=documento_paciente)
+
+    #if documento_profesional is not None:
+    #    if usuario.medico is None or usuario.medico.documento != documento_profesional:
+    #        return Response({"mensaje": "true"}, status=status.HTTP_200_OK)
+            
+    return usuario.historia_clinica
     
 def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
     usuario = Usuario(
@@ -45,28 +35,21 @@ def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
     usuario.save()
     return usuario
     
-def asignar_medico_a_paciente(documento_profesional, documento_paciente):
-    try:
-        profesional = Usuario.objects.get(documento=documento_profesional, tipo='profesionalSalud')
-        paciente = Usuario.objects.get(documento=documento_paciente, tipo='paciente')
-        if not paciente.medico:
-            paciente.medico = profesional
-            paciente.save()
-            
-        return paciente
-    except Usuario.DoesNotExist:
-        return None
+def agregar_profesional_a_usuario(documento_profesional, documento_paciente):
+    profesional = Usuario.objects.get(documento=documento_profesional, tipo='profesionalSalud')
+    usuario = Usuario.objects.get(documento=documento_paciente)
+    if not usuario.medico:
+        usuario.medico = profesional
+        usuario.save()
+        return usuario
 
 def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, tipo, descripcion):
 
     try:
         usuario = Usuario.objects.get(documento=documento_paciente)
-        
         if usuario.medico is None or usuario.medico.documento != documento_profesional:
             return "true"
-
         if not usuario.historia_clinica:
-
             nueva_historia_clinica = HistoriaClinica(
                 diagnosticos="No se ha presentado ningún diagnostico",
                 tratamientos="No se han presentados tratamientos",
@@ -75,17 +58,16 @@ def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, t
             nueva_historia_clinica.save()
             usuario.historia_clinica = nueva_historia_clinica
             usuario.save()
-
         adenda = Adenda(fecha=fecha, tipo=tipo, descripcion=descripcion, historia_clinica=usuario.historia_clinica)
         adenda.save()
-
         return None
 
     except Usuario.DoesNotExist:
         return "false"
-    
-def bytes_a_base64(mensaje_bytes):
-    return base64.b64encode(mensaje_bytes).decode('utf-8')
+
+def eliminar_usuario_por_documento(documento):
+    usuario = Usuario.objects.get(documento=documento)
+    usuario.delete()
 
 class usuarioAPI(APIView):
 
@@ -113,48 +95,28 @@ class historiaClinicaAPI(APIView):
 
     def post(self, request):
 
-        try:
-            documento_paciente = request.data.get("documento_paciente")
-            documento_profesional = request.data.get("documento_profesional")
+        documento_paciente = request.data.get("documento_paciente")
+        documento_profesional = request.data.get("documento_profesional")
+        
+        historia = obtener_historia_por_documento(documento_paciente, documento_profesional)
 
-            paciente = Usuario.objects.get(documento=documento_paciente)
-
-            if documento_profesional is not None:
-
-                if paciente.medico is None or paciente.medico.documento != documento_profesional:
-                    return Response({"mensaje": "true"}, status=status.HTTP_200_OK)
-
+        if historia:
             dict_historiaclinica = {}
-            if paciente.historia_clinica:
+            dict_historiaclinica["diagnosticos"] = historia.diagnosticos
+            dict_historiaclinica["tratamientos"] = historia.tratamientos
+            dict_historiaclinica["notas"] = historia.notas
+            adendas = Adenda.objects.filter(historia_clinica=historia)
+            adendas_list = [
+                {
+                    "fecha": adenda.fecha,
+                    "tipo": adenda.tipo,
+                    "descripcion": adenda.descripcion
+                } for adenda in adendas
+            ]
+            dict_historiaclinica["adendas"] = adendas_list
+            return Response({"historia_clinica":dict_historiaclinica}, status=status.HTTP_200_OK)
 
-                historia = paciente.historia_clinica
-
-                dict_historiaclinica["diagnosticos"] = historia.diagnosticos
-                dict_historiaclinica["tratamientos"] = historia.tratamientos
-                dict_historiaclinica["notas"] = historia.notas
-
-                adendas = Adenda.objects.filter(historia_clinica=historia)
-                adendas_list = [
-                    {
-                        "fecha": adenda.fecha,
-                        "tipo": adenda.tipo,
-                        "descripcion": adenda.descripcion
-                    } for adenda in adendas
-                ]
-
-                dict_historiaclinica["adendas"] = adendas_list
-
-            llave = Fernet.generate_key()
-            mensaje_codificado = encriptarMensaje(dict_historiaclinica, llave)
-            mensaje_codificado_base64 = bytes_a_base64(mensaje_codificado)
-
-            llave_base64 = bytes_a_base64(llave)
-            llave_codificada_jwt = jwt.encode({"llave": llave_base64}, settings.SECRET_KEY, algorithm="HS256")
-
-            return Response({"llave_codificada":llave_codificada_jwt,"mensaje_codificado":mensaje_codificado_base64}, status=status.HTTP_200_OK)
-
-        except Usuario.DoesNotExist:
-            return Response({}, status=status.HTTP_200_OK)
+        return Response({}, status=status.HTTP_200_OK)
     
 class agregarAdendaAPI(APIView):
 
@@ -200,7 +162,7 @@ eliminar_usuario_por_documento("1234567890")
 eliminar_usuario_por_documento("0987654321")
 agregar_usuario("1234567890", "123", "profesionalSalud", "Carlos Muñoz", "20", "3164614926", "Masculino", "https://i.ibb.co/ZGqCFwb/carlitos.png")
 agregar_usuario("0987654321", "123", "paciente", "Harold Samuel Hernandez", "25", "3026444020", "Masculino", "https://i.ibb.co/ZgNP89g/image-2023-10-20-103230643.png")
-asignar_medico_a_paciente('1234567890', '0987654321')
+agregar_profesional_a_usuario('1234567890', '0987654321')
 agregar_adenda_a_usuario('0987654321', '1234567890', '18-04-2020', "Consulta Regular", 'Una consulta médica regular para evaluar el estado de salud general del paciente, discutir resultados de análisis previos y ajustar cualquier plan de tratamiento existente. Se abordan preguntas del paciente y se proporciona asesoramiento sobre hábitos de vida saludables.')
 agregar_adenda_a_usuario('0987654321', '1234567890', '05-01-2022', "Seguimiento Postoperatorio", 'Seguimiento postoperatorio para revisar la recuperación después de una intervención quirúrgica. Se evalúan los signos vitales, se inspeccionan las incisiones y se discuten los próximos pasos en el proceso de recuperación. Se brinda apoyo emocional y se responden preguntas del paciente.')
 agregar_adenda_a_usuario('0987654321', '1234567890', '06-12-2023', "Sesión de Consejería Nutricional", 'Sesión especializada para discutir y desarrollar un plan de alimentación personalizado. Se revisan las preferencias alimenticias, se establecen metas nutricionales y se proporciona educación sobre hábitos alimenticios saludables para mejorar el bienestar general.')
