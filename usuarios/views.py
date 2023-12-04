@@ -68,10 +68,12 @@ def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, t
         return "false"
 
 def eliminar_usuario_por_documento(documento):
-    usuario = Usuario.objects.get(documento=documento)
-    if usuario:
+    try:
+        usuario = Usuario.objects.get(documento=documento)
         usuario.delete()
         eliminar_usuario_lectura.delay(documento)
+    except ObjectDoesNotExist:
+        return None
 
 class usuarioAPI(APIView):
 
