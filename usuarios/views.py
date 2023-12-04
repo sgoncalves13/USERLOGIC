@@ -68,9 +68,9 @@ def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, t
         if not usuario.historia_clinica:
 
             nueva_historia_clinica = HistoriaClinica(
-                diagnosticos="Ninguno",
-                tratamientos="Ninguno",
-                notas="Ninguno"
+                diagnosticos="No se ha presentado ningún diagnostico",
+                tratamientos="No se han presentados tratamientos",
+                notas="No hay notas sobre el paciente"
             )
             nueva_historia_clinica.save()
             usuario.historia_clinica = nueva_historia_clinica
@@ -121,8 +121,8 @@ class historiaClinicaAPI(APIView):
 
             if documento_profesional is not None:
 
-                if not paciente.medico.filter(documento=documento_profesional).exists():
-                    return Response({"mensaje":"true"}, status=status.HTTP_200_OK)
+                if paciente.medico is None or paciente.medico.documento != documento_profesional:
+                    return Response({"mensaje": "true"}, status=status.HTTP_200_OK)
 
             dict_historiaclinica = {}
             if paciente.historia_clinica:
@@ -201,6 +201,10 @@ eliminar_usuario_por_documento("0987654321")
 agregar_usuario("1234567890", "123", "profesionalSalud", "Carlos Muñoz", "20", "3164614926", "Masculino", "https://i.ibb.co/ZGqCFwb/carlitos.png")
 agregar_usuario("0987654321", "123", "paciente", "Harold Samuel Hernandez", "25", "323232323232", "Masculino", "https://i.ibb.co/ZgNP89g/image-2023-10-20-103230643.png")
 asignar_medico_a_paciente('1234567890', '0987654321')
+agregar_adenda_a_usuario('0987654321', '1234567890', '18-04-2020', "Consulta Regular", 'Una consulta médica regular para evaluar el estado de salud general del paciente, discutir resultados de análisis previos y ajustar cualquier plan de tratamiento existente. Se abordan preguntas del paciente y se proporciona asesoramiento sobre hábitos de vida saludables.')
+agregar_adenda_a_usuario('0987654321', '1234567890', '05-01-2022', "Seguimiento Postoperatorio", 'Seguimiento postoperatorio para revisar la recuperación después de una intervención quirúrgica. Se evalúan los signos vitales, se inspeccionan las incisiones y se discuten los próximos pasos en el proceso de recuperación. Se brinda apoyo emocional y se responden preguntas del paciente.')
+agregar_adenda_a_usuario('0987654321', '1234567890', '06-12-2023', "Sesión de Consejería Nutricional", 'Sesión especializada para discutir y desarrollar un plan de alimentación personalizado. Se revisan las preferencias alimenticias, se establecen metas nutricionales y se proporciona educación sobre hábitos alimenticios saludables para mejorar el bienestar general.')
+
 
 eliminar_usuario_por_documento("1092524481")
 eliminar_usuario_por_documento("88152239")
