@@ -1,8 +1,6 @@
 from .models import Usuario, UsuarioLectura
 from django.core.exceptions import ObjectDoesNotExist
-from asgiref.sync import sync_to_async
 
-@sync_to_async
 async def agregar_usuario_lectura(documento):
     usuario = Usuario.objects.get(documento=documento)
     usuario_lectura = UsuarioLectura(
@@ -15,7 +13,6 @@ async def agregar_usuario_lectura(documento):
     )
     usuario_lectura.save()
 
-@sync_to_async
 async def eliminar_usuario_lectura(documento):
     try:
         usuario_lectura = UsuarioLectura.objects.get(documento=documento)
