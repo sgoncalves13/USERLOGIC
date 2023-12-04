@@ -1,7 +1,9 @@
 from .models import Usuario, UsuarioLectura
 from django.core.exceptions import ObjectDoesNotExist
+from django_orm_extensions.postgres.decorators import db_sync
 
-async def agregar_usuario_lectura(documento):
+@db_sync
+def agregar_usuario_lectura(documento):
     usuario = Usuario.objects.get(documento=documento)
     usuario_lectura = UsuarioLectura(
        documento = usuario.documento,
@@ -13,7 +15,8 @@ async def agregar_usuario_lectura(documento):
     )
     usuario_lectura.save()
 
-async def eliminar_usuario_lectura(documento):
+@db_sync
+def eliminar_usuario_lectura(documento):
     try:
         usuario_lectura = UsuarioLectura.objects.get(documento=documento)
         usuario_lectura.delete()

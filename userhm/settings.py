@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'usuarios'
+    'usuarios',
+    'django_orm_extensions'
 ]
 
 MIDDLEWARE = [
@@ -82,6 +83,10 @@ DATABASES = {
         'PASSWORD': 'isis2503',
         'HOST': '10.115.48.18',
         'PORT': '',
+        'OPTIONS': {
+            'isolation_level': 'repeatable read',
+            'extensions': ['django_orm_extensions.postgres'],
+        },
     }
 }
 
