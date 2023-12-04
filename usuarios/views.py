@@ -5,8 +5,9 @@ import hashlib
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from cryptography.fernet import Fernet
 from .models import Usuario, Adenda, HistoriaClinica
+from celery import shared_task
+from .tasks import agregar_usuario_lectura
 
 def obtener_usuario_por_documento(documento):
     usuario = Usuario.objects.get(documento=documento)
@@ -33,6 +34,7 @@ def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
         sexo=sexo,
     )
     usuario.save()
+    agregar_usuario_lectura.delay(documento)
     return usuario
     
 def agregar_profesional_a_usuario(documento_profesional, documento_paciente):
@@ -111,7 +113,7 @@ class historiaClinicaAPI(APIView):
                 } for adenda in adendas
             ]
             dict_historia["adendas"] = adendas_list
-            
+
             return Response({"historia_clinica":dict_historia}, status=status.HTTP_200_OK)
 
         return Response({}, status=status.HTTP_200_OK)

@@ -25,11 +25,8 @@ class Usuario(models.Model):
 
 class UsuarioLectura(models.Model):
     documento = models.CharField(max_length=15, primary_key=True)
-    foto = models.CharField(max_length=255)
-    nombre = models.CharField(max_length=30)
-    edad = models.CharField(max_length=30)
-    telefono = models.CharField(max_length=30)
-    sexo = models.CharField(max_length=30)
-
-    class Meta:
-        managed = False  # Evita que Django cree tablas para este modelo
+    foto = models.CharField(max_length=255, default='default')
+    nombre = models.CharField(max_length=30, default='default')
+    edad = models.CharField(max_length=30, default='default')
+    telefono = models.CharField(max_length=30, default='default')
+    sexo = models.CharField(max_length=30, default='default')
