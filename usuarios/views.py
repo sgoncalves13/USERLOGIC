@@ -7,8 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Usuario, Adenda, HistoriaClinica
-from celery import shared_task
 from .tasks import agregar_usuario_lectura, eliminar_usuario_lectura
+import asyncio
 
 def obtener_usuario_por_documento(documento):
     usuario = Usuario.objects.get(documento=documento)
@@ -35,7 +35,7 @@ def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
         sexo=sexo,
     )
     usuario.save()
-    agregar_usuario_lectura.delay(documento)
+    asyncio.run(agregar_usuario_lectura(documento))
     return usuario
     
 def agregar_profesional_a_usuario(documento_profesional, documento_paciente):
@@ -72,7 +72,7 @@ def eliminar_usuario_por_documento(documento):
     try:
         usuario = Usuario.objects.get(documento=documento)
         usuario.delete()
-        eliminar_usuario_lectura.delay(documento)
+        asyncio.run(eliminar_usuario_lectura(documento))
     except ObjectDoesNotExist:
         return None
 
