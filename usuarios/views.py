@@ -1,4 +1,5 @@
 import json
+from django.core.exceptions import ObjectDoesNotExist
 import jwt
 from django.conf import settings
 import hashlib
