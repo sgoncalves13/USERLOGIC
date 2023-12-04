@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Usuario, Adenda, HistoriaClinica
 from celery import shared_task
-from .tasks import agregar_usuario_lectura
+from .tasks import agregar_usuario_lectura, eliminar_usuario_lectura
 
 def obtener_usuario_por_documento(documento):
     usuario = Usuario.objects.get(documento=documento)
@@ -70,6 +70,7 @@ def agregar_adenda_a_usuario(documento_paciente, documento_profesional, fecha, t
 def eliminar_usuario_por_documento(documento):
     usuario = Usuario.objects.get(documento=documento)
     usuario.delete()
+    eliminar_usuario_lectura.delay(documento)
 
 class usuarioAPI(APIView):
 

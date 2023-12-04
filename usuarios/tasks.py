@@ -13,3 +13,7 @@ def agregar_usuario_lectura(documento):
        sexo = usuario.sexo
     )
     usuario_lectura.save()
+
+def eliminar_usuario_lectura(documento):
+    usuario_lectura = UsuarioLectura.objects.get(documento=documento)
+    usuario_lectura.delete()
