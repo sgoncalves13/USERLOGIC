@@ -22,11 +22,3 @@ class Usuario(models.Model):
     sexo = models.CharField(max_length=30, default='default')
     historia_clinica = models.OneToOneField(HistoriaClinica, on_delete=models.CASCADE, related_name='usuario', null=True, blank=True)
     medico = models.OneToOneField('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='paciente', limit_choices_to={'tipo': 'profesionalSalud'})
-
-class UsuarioLectura(models.Model):
-    documento = models.CharField(max_length=15, primary_key=True)
-    foto = models.CharField(max_length=255, default='default')
-    nombre = models.CharField(max_length=30, default='default')
-    edad = models.CharField(max_length=30, default='default')
-    telefono = models.CharField(max_length=30, default='default')
-    sexo = models.CharField(max_length=30, default='default')
