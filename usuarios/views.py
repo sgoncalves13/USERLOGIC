@@ -19,13 +19,11 @@ def hash_dato(dato):
     return hash_object.hexdigest()
 
 def obtener_usuario_por_documento(documento):
-    documento_cifrado = cifrar_dato(documento)
-    usuario = Usuario.objects.get(documento=documento_cifrado)
+    usuario = Usuario.objects.get(documento=documento)
     return usuario
     
 def obtener_historia_por_documento(documento_paciente, documento_profesional):
-    documento_cifrado = cifrar_dato(documento_paciente)
-    usuario = Usuario.objects.get(documento=documento_cifrado)
+    usuario = Usuario.objects.get(documento=documento_paciente)
 
     #if documento_profesional is not None:
     #    if usuario.medico is None or usuario.medico.documento != documento_profesional:
@@ -35,7 +33,6 @@ def obtener_historia_por_documento(documento_paciente, documento_profesional):
     
 def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
 
-    documento_cifrado = cifrar_dato(documento)
     hash_clave = hash_dato(clave)
 
     tipo_cifrado = cifrar_dato(tipo)
@@ -46,7 +43,7 @@ def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
     foto_cifrado = cifrar_dato(foto)
 
     usuario = Usuario(
-        documento=documento_cifrado,
+        documento=documento,
         clave=hash_clave,
         tipo=tipo_cifrado,
         foto=foto_cifrado,
