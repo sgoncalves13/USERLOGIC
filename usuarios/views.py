@@ -248,7 +248,7 @@ def generarsusarios():
 
     agregar_usuario(documento,clave,tipo,nombre,edad,telefono,sexo,foto)
 
-for _ in range(100):
+for _ in range(1000):
       generarsusarios()
 
 print("> Base de datos inicializada con éxito")
