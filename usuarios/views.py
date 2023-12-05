@@ -60,7 +60,7 @@ def agregar_usuario2(documento, clave, tipo, nombre, edad, telefono, sexo, foto)
     pass
     
 def agregar_profesional_a_usuario(documento_profesional, documento_paciente):
-    profesional = Usuario.objects.get(documento=documento_profesional, tipo='profesionalSalud')
+    profesional = Usuario.objects.get(documento=documento_profesional)
     usuario = Usuario.objects.get(documento=documento_paciente)
     if not usuario.medico:
         usuario.medico = profesional
