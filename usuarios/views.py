@@ -7,6 +7,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Usuario, Adenda, HistoriaClinica
+from cryptography.fernet import Fernet
+
+cipher_suite = Fernet(settings.SIMETRIC_KEY)
+
+def cifrar_dato(dato):
+    return cipher_suite.encrypt(dato.encode())
 
 def obtener_usuario_por_documento(documento):
     usuario = Usuario.objects.get(documento=documento)
@@ -22,16 +28,27 @@ def obtener_historia_por_documento(documento_paciente, documento_profesional):
     return usuario.historia_clinica
     
 def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
+
+    documento_cifrado = cifrar_dato(documento)
+    clave_cifrado = cifrar_dato(clave)
+    tipo_cifrado = cifrar_dato(tipo)
+    nombre_cifrado = cifrar_dato(nombre)
+    edad_cifrado = cifrar_dato(edad)
+    telefono_cifrado = cifrar_dato(telefono)
+    sexo_cifrado = cifrar_dato(sexo)
+    foto_cifrado = cifrar_dato(foto)
+
     usuario = Usuario(
-        documento=documento,
-        clave=clave,
-        tipo=tipo,
-        foto=foto,
-        nombre=nombre,
-        edad=edad,
-        telefono=telefono,
-        sexo=sexo,
+        documento=documento_cifrado,
+        clave=clave_cifrado,
+        tipo=tipo_cifrado,
+        foto=foto_cifrado,
+        nombre=nombre_cifrado,
+        edad=edad_cifrado,
+        telefono=telefono_cifrado,
+        sexo=sexo_cifrado,
     )
+
     usuario.save()
     return usuario
     
@@ -159,6 +176,9 @@ class agregarAdendaAPI(APIView):
     
 
 # INICIALIZACIÓN DE LA BASE DE DATOS
+
+Usuario.objects.all().delete()
+
 
 eliminar_usuario_por_documento("1234567890")
 eliminar_usuario_por_documento("0987654321")
