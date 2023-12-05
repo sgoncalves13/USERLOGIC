@@ -14,6 +14,10 @@ cipher_suite = Fernet(settings.SIMETRIC_KEY.encode())
 def cifrar_dato(dato):
     return cipher_suite.encrypt(dato.encode())
 
+def hash_dato(dato):
+    hash_object = hashlib.sha256(dato.encode())
+    return hash_object.hexdigest()
+
 def obtener_usuario_por_documento(documento):
     usuario = Usuario.objects.get(documento=documento)
     return usuario
@@ -29,8 +33,9 @@ def obtener_historia_por_documento(documento_paciente, documento_profesional):
     
 def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
 
-    documento_cifrado = cifrar_dato(documento)
-    clave_cifrado = cifrar_dato(clave)
+    hash_documento = hash_dato(documento)
+    hash_clave = hash_dato(clave)
+
     tipo_cifrado = cifrar_dato(tipo)
     nombre_cifrado = cifrar_dato(nombre)
     edad_cifrado = cifrar_dato(edad)
@@ -39,8 +44,8 @@ def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
     foto_cifrado = cifrar_dato(foto)
 
     usuario = Usuario(
-        documento=documento_cifrado,
-        clave=clave_cifrado,
+        documento=hash_documento,
+        clave=hash_clave,
         tipo=tipo_cifrado,
         foto=foto_cifrado,
         nombre=nombre_cifrado,
@@ -51,6 +56,9 @@ def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
 
     usuario.save()
     return usuario
+
+def agregar_usuario2(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
+    pass
     
 def agregar_profesional_a_usuario(documento_profesional, documento_paciente):
     profesional = Usuario.objects.get(documento=documento_profesional, tipo='profesionalSalud')
@@ -179,15 +187,14 @@ class agregarAdendaAPI(APIView):
 
 Usuario.objects.all().delete()
 
-"""
 eliminar_usuario_por_documento("1234567890")
 eliminar_usuario_por_documento("0987654321")
 agregar_usuario("1234567890", "123", "profesionalSalud", "Carlos Muñoz", "20", "3164614926", "Masculino", "https://i.ibb.co/ZGqCFwb/carlitos.png")
 agregar_usuario("0987654321", "123", "paciente", "Harold Samuel Hernandez", "25", "3026444020", "Masculino", "https://i.ibb.co/ZgNP89g/image-2023-10-20-103230643.png")
-agregar_profesional_a_usuario('1234567890', '0987654321')
-agregar_adenda_a_usuario('0987654321', '1234567890', '18-04-2020', "Consulta Regular", 'Una consulta médica regular para evaluar el estado de salud general del paciente, discutir resultados de análisis previos y ajustar cualquier plan de tratamiento existente. Se abordan preguntas del paciente y se proporciona asesoramiento sobre hábitos de vida saludables.')
-agregar_adenda_a_usuario('0987654321', '1234567890', '05-01-2022', "Seguimiento Postoperatorio", 'Seguimiento postoperatorio para revisar la recuperación después de una intervención quirúrgica. Se evalúan los signos vitales, se inspeccionan las incisiones y se discuten los próximos pasos en el proceso de recuperación. Se brinda apoyo emocional y se responden preguntas del paciente.')
-agregar_adenda_a_usuario('0987654321', '1234567890', '06-12-2023', "Sesión de Consejería Nutricional", 'Sesión especializada para discutir y desarrollar un plan de alimentación personalizado. Se revisan las preferencias alimenticias, se establecen metas nutricionales y se proporciona educación sobre hábitos alimenticios saludables para mejorar el bienestar general.')
+#agregar_profesional_a_usuario('1234567890', '0987654321')
+#agregar_adenda_a_usuario('0987654321', '1234567890', '18-04-2020', "Consulta Regular", 'Una consulta médica regular para evaluar el estado de salud general del paciente, discutir resultados de análisis previos y ajustar cualquier plan de tratamiento existente. Se abordan preguntas del paciente y se proporciona asesoramiento sobre hábitos de vida saludables.')
+#agregar_adenda_a_usuario('0987654321', '1234567890', '05-01-2022', "Seguimiento Postoperatorio", 'Seguimiento postoperatorio para revisar la recuperación después de una intervención quirúrgica. Se evalúan los signos vitales, se inspeccionan las incisiones y se discuten los próximos pasos en el proceso de recuperación. Se brinda apoyo emocional y se responden preguntas del paciente.')
+#agregar_adenda_a_usuario('0987654321', '1234567890', '06-12-2023', "Sesión de Consejería Nutricional", 'Sesión especializada para discutir y desarrollar un plan de alimentación personalizado. Se revisan las preferencias alimenticias, se establecen metas nutricionales y se proporciona educación sobre hábitos alimenticios saludables para mejorar el bienestar general.')
 
 eliminar_usuario_por_documento("1092524481")
 eliminar_usuario_por_documento("88152239")
@@ -195,7 +202,7 @@ eliminar_usuario_por_documento("27897251")
 agregar_usuario("1092524481", "123", "profesionalSalud", "Jefferson Hernandez", "20", "3023464345", "Masculino", "https://i.ibb.co/ZGqCFwb/carlitos.png")
 agregar_usuario("88152239", "123", "paciente", "Luis Andres Garcia", "45", "3208410532", "Masculino", "https://i.ibb.co/BsMgQnH/image-2023-10-20-102702811.png")
 agregar_usuario("27897251", "123", "director", "Claudia Patricia Suarez", "50", "3043757337", "Femenino", "https://i.ibb.co/3ydfwNR/image-2023-10-20-102845276.png")
-"""
+
 # POBLACIÓN DE DATOS
 
 import random
