@@ -30,6 +30,10 @@ def obtener_historia_por_documento(documento_paciente, documento_profesional):
     #        return Response({"mensaje": "true"}, status=status.HTTP_200_OK)
             
     return usuario.historia_clinica
+
+def obtener_usuarios():
+    usuarios = Usuario.objects.all()
+    return usuarios
     
 def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
 
@@ -114,6 +118,26 @@ class usuarioAPI(APIView):
         }
 
         return Response({"usuario":dict_usuario}, status=status.HTTP_200_OK)
+    
+class usuariosAPI(APIView):
+
+    def get(self, request):
+
+        usuarios = obtener_usuarios()
+
+        dict_usuarios = [
+            {
+                "documento": usuario.documento,
+                "tipo": usuario.tipo,
+                "foto": usuario.foto,
+                "nombre": usuario.nombre,
+                "edad": usuario.edad,
+                "telefono": usuario.telefono,
+                "sexo": usuario.sexo,
+            } for usuario in usuarios
+        ]
+
+        return Response({"usuarios":dict_usuarios}, status=status.HTTP_200_OK)
             
 class historiaClinicaAPI(APIView):
 
