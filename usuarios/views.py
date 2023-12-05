@@ -24,7 +24,8 @@ def obtener_usuario_por_documento(documento):
     return usuario
     
 def obtener_historia_por_documento(documento_paciente, documento_profesional):
-    usuario = Usuario.objects.get(documento=documento_paciente)
+    hash_documento_paciente = hash_dato(documento_paciente)
+    usuario = Usuario.objects.get(documento=hash_documento_paciente)
 
     #if documento_profesional is not None:
     #    if usuario.medico is None or usuario.medico.documento != documento_profesional:
