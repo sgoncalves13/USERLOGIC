@@ -208,11 +208,8 @@ class agregarAdendaAPI(APIView):
     
 
 # INICIALIZACIÓN DE LA BASE DE DATOS
-
 Usuario.objects.all().delete()
 
-eliminar_usuario_por_documento("1234567890")
-eliminar_usuario_por_documento("0987654321")
 agregar_usuario("1234567890", "123", "profesionalSalud", "Carlos Muñoz", "20", "3164614926", "Masculino", "https://i.ibb.co/ZGqCFwb/carlitos.png")
 agregar_usuario("0987654321", "123", "paciente", "Harold Samuel Hernandez", "25", "3026444020", "Masculino", "https://i.ibb.co/ZgNP89g/image-2023-10-20-103230643.png")
 agregar_profesional_a_usuario('1234567890', '0987654321')
@@ -220,9 +217,6 @@ agregar_adenda_a_usuario('0987654321', '1234567890', '18-04-2020', "Consulta Reg
 agregar_adenda_a_usuario('0987654321', '1234567890', '05-01-2022', "Seguimiento Postoperatorio", 'Seguimiento postoperatorio para revisar la recuperación después de una intervención quirúrgica. Se evalúan los signos vitales, se inspeccionan las incisiones y se discuten los próximos pasos en el proceso de recuperación. Se brinda apoyo emocional y se responden preguntas del paciente.')
 agregar_adenda_a_usuario('0987654321', '1234567890', '06-12-2023', "Sesión de Consejería Nutricional", 'Sesión especializada para discutir y desarrollar un plan de alimentación personalizado. Se revisan las preferencias alimenticias, se establecen metas nutricionales y se proporciona educación sobre hábitos alimenticios saludables para mejorar el bienestar general.')
 
-eliminar_usuario_por_documento("1092524481")
-eliminar_usuario_por_documento("88152239")
-eliminar_usuario_por_documento("27897251")
 agregar_usuario("1092524481", "123", "profesionalSalud", "Jefferson Hernandez", "20", "3023464345", "Masculino", "https://i.ibb.co/ZGqCFwb/carlitos.png")
 agregar_usuario("88152239", "123", "paciente", "Luis Andres Garcia", "45", "3208410532", "Masculino", "https://i.ibb.co/BsMgQnH/image-2023-10-20-102702811.png")
 agregar_usuario("27897251", "123", "director", "Claudia Patricia Suarez", "50", "3043757337", "Femenino", "https://i.ibb.co/3ydfwNR/image-2023-10-20-102845276.png")
@@ -232,9 +226,12 @@ agregar_usuario("27897251", "123", "director", "Claudia Patricia Suarez", "50", 
 import random
 from faker import Faker
 
+registro_documentos = set()
+
 def generarsusarios():
+
     faker = Faker()
-    registro_documentos = set()
+
     documento = str(random.randint(1000000000, 9999999999))
 
     while documento in registro_documentos:
@@ -251,7 +248,7 @@ def generarsusarios():
 
     agregar_usuario(documento,clave,tipo,nombre,edad,telefono,sexo,foto)
 
-for _ in range(5000):
+for _ in range(100):
       generarsusarios()
 
 print("> Base de datos inicializada con éxito")
