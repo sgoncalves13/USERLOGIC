@@ -124,6 +124,7 @@ class historiaClinicaAPI(APIView):
         
         historia = obtener_historia_por_documento(documento_paciente, documento_profesional)
 
+        print(historia)
         if historia is not None:
             dict_historia = {}
             dict_historia["diagnosticos"] = historia.diagnosticos
