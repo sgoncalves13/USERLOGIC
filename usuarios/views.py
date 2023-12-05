@@ -19,7 +19,8 @@ def hash_dato(dato):
     return hash_object.hexdigest()
 
 def obtener_usuario_por_documento(documento):
-    usuario = Usuario.objects.get(documento=documento)
+    hash_documento = hash_dato(documento)
+    usuario = Usuario.objects.get(documento=hash_documento)
     return usuario
     
 def obtener_historia_por_documento(documento_paciente, documento_profesional):
