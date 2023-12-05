@@ -35,7 +35,7 @@ def obtener_usuarios():
     usuarios = Usuario.objects.all()
     return usuarios
     
-def agregar_usuario2(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
+def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
 
     hash_clave = hash_dato(clave)
 
@@ -60,7 +60,7 @@ def agregar_usuario2(documento, clave, tipo, nombre, edad, telefono, sexo, foto)
     usuario.save()
     return usuario
 
-def agregar_usuario(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
+def agregar_usuario2(documento, clave, tipo, nombre, edad, telefono, sexo, foto):
     usuario = Usuario(
         documento=documento,
         clave=clave,
