@@ -9,7 +9,7 @@ from rest_framework import status
 from .models import Usuario, Adenda, HistoriaClinica
 from cryptography.fernet import Fernet
 
-cipher_suite = Fernet('SebastianRamirezLeMeteMuyDuro')
+cipher_suite = Fernet(settings.SIMETRIC_KEY.encode())
 
 def cifrar_dato(dato):
     return cipher_suite.encrypt(dato.encode())
