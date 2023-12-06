@@ -219,18 +219,18 @@ class agregarAdendaAPI(APIView):
     
 
 # INICIALIZACIÓN DE LA BASE DE DATOS
-Usuario.objects.all().delete()
+#Usuario.objects.all().delete()
 
-agregar_usuario("1234567890", "123", "profesionalSalud", "Carlos Muñoz", "20", "3164614926", "Masculino", "https://i.ibb.co/ZGqCFwb/carlitos.png")
-agregar_usuario("0987654321", "123", "paciente", "Harold Samuel Hernandez", "25", "3026444020", "Masculino", "https://i.ibb.co/ZgNP89g/image-2023-10-20-103230643.png")
-agregar_profesional_a_usuario('1234567890', '0987654321')
-agregar_adenda_a_usuario('0987654321', '1234567890', '18-04-2020', "Consulta Regular", 'Una consulta médica regular para evaluar el estado de salud general del paciente, discutir resultados de análisis previos y ajustar cualquier plan de tratamiento existente. Se abordan preguntas del paciente y se proporciona asesoramiento sobre hábitos de vida saludables.')
-agregar_adenda_a_usuario('0987654321', '1234567890', '05-01-2022', "Seguimiento Postoperatorio", 'Seguimiento postoperatorio para revisar la recuperación después de una intervención quirúrgica. Se evalúan los signos vitales, se inspeccionan las incisiones y se discuten los próximos pasos en el proceso de recuperación. Se brinda apoyo emocional y se responden preguntas del paciente.')
-agregar_adenda_a_usuario('0987654321', '1234567890', '06-12-2023', "Sesión de Consejería Nutricional", 'Sesión especializada para discutir y desarrollar un plan de alimentación personalizado. Se revisan las preferencias alimenticias, se establecen metas nutricionales y se proporciona educación sobre hábitos alimenticios saludables para mejorar el bienestar general.')
+#agregar_usuario("1234567890", "123", "profesionalSalud", "Carlos Muñoz", "20", "3164614926", "Masculino", "https://i.ibb.co/ZGqCFwb/carlitos.png")
+#agregar_usuario("0987654321", "123", "paciente", "Harold Samuel Hernandez", "25", "3026444020", "Masculino", "https://i.ibb.co/ZgNP89g/image-2023-10-20-103230643.png")
+#agregar_profesional_a_usuario('1234567890', '0987654321')
+#gregar_adenda_a_usuario('0987654321', '1234567890', '18-04-2020', "Consulta Regular", 'Una consulta médica regular para evaluar el estado de salud general del paciente, discutir resultados de análisis previos y ajustar cualquier plan de tratamiento existente. Se abordan preguntas del paciente y se proporciona asesoramiento sobre hábitos de vida saludables.')
+#agregar_adenda_a_usuario('0987654321', '1234567890', '05-01-2022', "Seguimiento Postoperatorio", 'Seguimiento postoperatorio para revisar la recuperación después de una intervención quirúrgica. Se evalúan los signos vitales, se inspeccionan las incisiones y se discuten los próximos pasos en el proceso de recuperación. Se brinda apoyo emocional y se responden preguntas del paciente.')
+#agregar_adenda_a_usuario('0987654321', '1234567890', '06-12-2023', "Sesión de Consejería Nutricional", 'Sesión especializada para discutir y desarrollar un plan de alimentación personalizado. Se revisan las preferencias alimenticias, se establecen metas nutricionales y se proporciona educación sobre hábitos alimenticios saludables para mejorar el bienestar general.')
 
-agregar_usuario("1092524481", "123", "profesionalSalud", "Jefferson Hernandez", "20", "3023464345", "Masculino", "https://i.ibb.co/ZGqCFwb/carlitos.png")
-agregar_usuario("88152239", "123", "paciente", "Luis Andres Garcia", "45", "3208410532", "Masculino", "https://i.ibb.co/BsMgQnH/image-2023-10-20-102702811.png")
-agregar_usuario("27897251", "123", "director", "Claudia Patricia Suarez", "50", "3043757337", "Femenino", "https://i.ibb.co/3ydfwNR/image-2023-10-20-102845276.png")
+#agregar_usuario("1092524481", "123", "profesionalSalud", "Jefferson Hernandez", "20", "3023464345", "Masculino", "https://i.ibb.co/ZGqCFwb/carlitos.png")
+#agregar_usuario("88152239", "123", "paciente", "Luis Andres Garcia", "45", "3208410532", "Masculino", "https://i.ibb.co/BsMgQnH/image-2023-10-20-102702811.png")
+#agregar_usuario("27897251", "123", "director", "Claudia Patricia Suarez", "50", "3043757337", "Femenino", "https://i.ibb.co/3ydfwNR/image-2023-10-20-102845276.png")
 
 # POBLACIÓN DE DATOS
 
@@ -259,8 +259,8 @@ def generarsusarios():
 
     agregar_usuario(documento,clave,tipo,nombre,edad,telefono,sexo,foto)
 
-for _ in range(1000):
-      generarsusarios()
+#for _ in range(1000):
+#      generarsusarios()
 
 print("> Base de datos inicializada con éxito")
 print("")
